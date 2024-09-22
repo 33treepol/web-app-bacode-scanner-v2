@@ -20,7 +20,7 @@ function App() {
   return (
     <Container style={{ textAlign: "center", paddingTop: "20px" }}>
       <CustomQrScanner onScan={handleScan} onError={handleError} />
-      <Typography variant="h6">{data}</Typography>
+      <Typography variant="h6">just change test: {data}</Typography>
     </Container>
   );
 }
