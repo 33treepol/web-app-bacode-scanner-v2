@@ -12,10 +12,17 @@ const CustomQrScanner: React.FC<CustomQrScannerProps> = ({
   onError,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [boxPosition, setBoxPosition] = useState<{
-    left: number;
-    top: number;
-  } | null>(null);
+  const [focusArea, setFocusArea] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }>({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+  });
 
   useEffect(() => {
     const codeReader = new BrowserMultiFormatReader();
@@ -42,7 +49,7 @@ const CustomQrScanner: React.FC<CustomQrScannerProps> = ({
               if (result) {
                 onScan(result.getText());
               }
-              if (error) {
+              if (error && !(error instanceof NotFoundException)) {
                 onError(error);
               }
             }
@@ -69,9 +76,14 @@ const CustomQrScanner: React.FC<CustomQrScannerProps> = ({
       const x = e.touches[0].clientX - rect.left;
       const y = e.touches[0].clientY - rect.top;
 
-      setBoxPosition({ left: x, top: y });
+      setFocusArea({
+        x: x - focusArea.width / 2,
+        y: y - focusArea.height / 2,
+        width: focusArea.width,
+        height: focusArea.height,
+      });
 
-      // Adjust camera focus or processing logic here if needed
+      // Note: Direct focus adjustment isn't possible, but we can use this area for custom logic
     }
   };
 
@@ -91,21 +103,20 @@ const CustomQrScanner: React.FC<CustomQrScannerProps> = ({
           left: 0,
           width: "100%",
           height: "100%",
-          pointerEvents: "none",
+          pointerEvents: "none", // Allow touch events to pass through to video
         }}
       >
-        {boxPosition && (
-          <div
-            style={{
-              position: "absolute",
-              border: "2px solid red",
-              width: "100px", // Adjustable
-              height: "100px", // Adjustable
-              left: boxPosition.left - 50, // Center box on touch point
-              top: boxPosition.top - 50, // Center box on touch point
-            }}
-          />
-        )}
+        <div
+          style={{
+            position: "absolute",
+            border: "2px solid red",
+            width: `${focusArea.width}px`,
+            height: `${focusArea.height}px`,
+            left: `${focusArea.x}px`,
+            top: `${focusArea.y}px`,
+            pointerEvents: "none", // Make sure the box doesn't capture touch events itself
+          }}
+        />
       </div>
     </Container>
   );
