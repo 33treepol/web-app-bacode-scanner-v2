@@ -12,11 +12,22 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onResult }) => {
 
   useEffect(() => {
     const codeReader = new BrowserMultiFormatReader();
+
+    const selectCamera = (devices: MediaDeviceInfo[]) => {
+      // Prefer rear camera
+      const rearCamera = devices.find(
+        (device) =>
+          device.label.toLowerCase().includes("back") ||
+          device.label.toLowerCase().includes("rear")
+      );
+      return rearCamera ? rearCamera.deviceId : devices[0].deviceId;
+    };
+
     codeReader.listVideoInputDevices().then((devices) => {
       if (devices.length > 0) {
-        const firstDeviceId = devices[0].deviceId;
+        const deviceId = selectCamera(devices);
         codeReader.decodeFromVideoDevice(
-          firstDeviceId,
+          deviceId,
           videoRef.current!,
           (result, error) => {
             if (result) {
