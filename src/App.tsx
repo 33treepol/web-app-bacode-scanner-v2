@@ -1,24 +1,19 @@
+// src/App.tsx
+
 import React from "react";
-import { Container, Typography } from "@mui/material";
-import CustomQrScanner from "./CustomQrScanner";
+import CameraFocus from "./CameraFocus";
+import { Container } from "@mui/material";
 
-function App() {
-  const [data, setData] = React.useState<string>("Not Found");
-
-  const handleScan = (result: string) => {
-    setData(result); // Update the scanned result in state
-  };
-
-  const handleError = (error: Error) => {
-    console.error("QR Scan Error:", error); // Log or handle the error
-  };
-
+const App: React.FC = () => {
   return (
-    <Container style={{ textAlign: "center", paddingTop: "20px" }}>
-      <CustomQrScanner onScan={handleScan} onError={handleError} />
-      <Typography variant="h6">Scanned Data: {data}</Typography>
+    <Container
+      disableGutters
+      maxWidth={false} // Use maxWidth prop for Container to disable default max-width
+      sx={{ p: 0 }} // Optionally add padding styles if needed
+    >
+      <CameraFocus />
     </Container>
   );
-}
+};
 
 export default App;
