@@ -1,11 +1,14 @@
 // src/components/QRCodeScanner.tsx
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
 
-const QRCodeScanner: React.FC = () => {
+interface QRCodeScannerProps {
+  onResult: (result: string) => void;
+}
+
+const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onResult }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [result, setResult] = useState<string | null>(null);
 
   useEffect(() => {
     const codeReader = new BrowserMultiFormatReader();
@@ -17,7 +20,7 @@ const QRCodeScanner: React.FC = () => {
           videoRef.current!,
           (result, error) => {
             if (result) {
-              setResult(result.getText());
+              onResult(result.getText());
             }
             if (error && !(error instanceof NotFoundException)) {
               console.error(error);
@@ -31,13 +34,10 @@ const QRCodeScanner: React.FC = () => {
     return () => {
       codeReader.reset();
     };
-  }, []);
+  }, [onResult]);
 
   return (
-    <div>
-      <video ref={videoRef} style={{ width: "100%", height: "auto" }}></video>
-      {result && <div>Result: {result}</div>}
-    </div>
+    <video ref={videoRef} style={{ width: "100%", height: "auto" }}></video>
   );
 };
 
