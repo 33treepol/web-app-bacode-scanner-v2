@@ -1,8 +1,8 @@
 // src/App.tsx
 
 import React, { useState } from "react";
-import "./App.css";
-import QRCodeScanner from "./CustomQrScanner";
+import "./App.css"; // Make sure this path is correct and styles are applied
+import QRCodeScanner from "./CustomQrScanner"; // Ensure the import path is correct
 import { Box } from "@mui/material";
 
 const App: React.FC = () => {
@@ -20,7 +20,9 @@ const App: React.FC = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          width: "50%",
+          width: "100%", // Adjust to 100% to fit better in most cases
+          maxWidth: "600px", // Optional: Add a max-width for better layout control
+          margin: "0 auto", // Center the box horizontally
         }}
       >
         <QRCodeScanner onResult={handleScanResult} />
