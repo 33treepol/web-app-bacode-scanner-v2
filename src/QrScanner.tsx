@@ -1,37 +1,64 @@
 import React, { useState } from "react";
 import QrReader from "react-qr-scanner";
 
-function App() {
-  const [data, setData] = useState("Not Found");
+interface CustomQrScannerProps {
+  onScan: (result: any) => void;
+  onError: (error: any) => void;
+}
 
-  const handleScan = (result: any) => {
-    if (result) {
-      setData(result.text);
-    } else {
-      setData("Not Found");
-    }
-  };
+const CustomQrScanner: React.FC<CustomQrScannerProps> = ({
+  onScan,
+  onError,
+}) => {
+  const [boxPosition, setBoxPosition] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
 
-  const handleError = (err: any) => {
-    console.error(err);
+  const handleTouch = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left;
+    const y = e.touches[0].clientY - rect.top;
+
+    setBoxPosition({ left: x, top: y });
+
+    // Additional logic to adjust focus or processing based on (x, y) can go here
   };
 
   return (
-    <div style={{ textAlign: "center", paddingTop: "20px" }}>
+    <div style={{ position: "relative", width: "500px", height: "500px" }}>
       <QrReader
         delay={300}
-        onError={handleError}
-        onScan={handleScan}
-        style={{
-          width: "500px",
-          height: "500px",
-          border: "2px solid black",
-          margin: "auto",
-        }}
+        onError={onError}
+        onScan={onScan}
+        style={{ width: "100%", height: "100%" }}
       />
-      <p>{data}</p>
+      <div
+        onTouchStart={handleTouch}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none", // Allow touch events to pass through to QrReader
+        }}
+      >
+        {boxPosition && (
+          <div
+            style={{
+              position: "absolute",
+              border: "2px solid red",
+              width: "100px", // Adjustable
+              height: "100px", // Adjustable
+              left: boxPosition.left - 50, // Center box on touch point
+              top: boxPosition.top - 50, // Center box on touch point
+            }}
+          />
+        )}
+      </div>
     </div>
   );
-}
+};
 
-export default App;
+export default CustomQrScanner;

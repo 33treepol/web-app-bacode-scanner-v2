@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import QrReader from "react-qr-scanner";
+import React from "react";
 import { Container, Typography } from "@mui/material";
+import CustomQrScanner from "./QrScanner";
 
 function App() {
-  const [data, setData] = useState<string>("Not Found");
+  const [data, setData] = React.useState<string>("Not Found");
 
   const handleScan = (result: any) => {
     if (result) {
@@ -19,17 +19,7 @@ function App() {
 
   return (
     <Container style={{ textAlign: "center", paddingTop: "20px" }}>
-      <QrReader
-        delay={300}
-        onError={handleError}
-        onScan={handleScan}
-        style={{
-          width: "500px",
-          height: "500px",
-          border: "2px solid black",
-          margin: "auto",
-        }}
-      />
+      <CustomQrScanner onScan={handleScan} onError={handleError} />
       <Typography variant="h6">{data}</Typography>
     </Container>
   );
